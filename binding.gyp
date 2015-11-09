@@ -119,6 +119,32 @@
 			"dependencies": [ "csdk" ]
 		},
 		{
+			"target_name": "generateenums",
+			"type": "none",
+			"actions": [ {
+				"action_name": "generateenums",
+				"message": "Generating enums",
+				"inputs": ["deps/iotivity"],
+				"outputs": ["src/enums.cc"],
+				"conditions": [
+					[ "'<(externalOCTBStack)'=='false'", {
+						"action": [
+							"sh",
+							"./generate-enums.sh",
+							'<(internal_octbstack_cflags)'
+						]
+					}, {
+						"action": [
+							"sh",
+							"./generate-enums.sh",
+							'<!@(echo "$OCTBSTACK_CFLAGS")'
+						]
+					} ]
+				]
+			} ],
+			"dependencies": [ "csdk" ]
+		},
+		{
 			"target_name": "iotivity",
 			"sources": [
 				"src/constants.cc",
@@ -149,7 +175,7 @@
 					"defines": [ "TESTING" ]
 				} ]
 			],
-			"dependencies": [ "csdk", "generateconstants" ]
+			"dependencies": [ "csdk", "generateconstants", "generateenums" ]
 		}
 	]
 }

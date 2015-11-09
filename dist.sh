@@ -55,7 +55,7 @@ while [[ $# -gt 0 ]]; do
 		echo "--buildonly or -b     : Build and exit"
 		echo "--distonly or -i      : Build distributable tree and exit"
 		echo "--noreinstall or -n   : Do not reinstall dev dependencies after distribution"
-		echo "--reinstallonly or -r : Reinstall dev dependencies and exit"
+		echo "--reinstallonly or -r : Reinstall regular and dev dependencies and exit"
 		echo "--help or -h          : Print this message and exit"
 		exit 0
 	fi

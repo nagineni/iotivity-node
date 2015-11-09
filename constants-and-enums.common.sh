@@ -1,5 +1,5 @@
 # Code that's common between looking for enums and looking for constants
-# Needs OCTBSTACK_CFLAGS for crawling include paths
+# Assumes the command line consists of OCTBSTACK_CFLAGS
 
 find_include_paths() {
 	echo "$OCTBSTACK_CFLAGS" | awk '{
@@ -14,6 +14,9 @@ find_include_paths() {
 		}
 	}'
 }
+
+# The command line consists of the CFLAGS
+OCTBSTACK_CFLAGS="$@"
 
 INCLUDE_PATHS=$( find_include_paths )
 

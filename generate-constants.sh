@@ -10,9 +10,6 @@
 #
 # The script also generates the function InitConstants() which the file is expected to export.
 
-# The command line consists of the CFLAGS
-OCTBSTACK_CFLAGS="$@"
-
 . ./constants-and-enums.common.sh
 
 # src/constants.cc
