@@ -1,6 +1,15 @@
 {
 	"variables": {
 		"externalOCTBStack": '<!(if test "x${OCTBSTACK_CFLAGS}x" != "xx" -a "x${OCTBSTACK_CFLAGS}x" != "xx"; then echo true; else echo false; fi)',
+
+		# Used when externalOCTBStack is false
+		"internal_octbstack_cflags": [
+			'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/csdk/stack/include")',
+			'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/csdk/ocrandom/include")',
+			'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/c_common")',
+			'-DROUTING_EP',
+			'-DTCP_ADAPTER'
+		]
 	},
 
 	"conditions": [
@@ -39,21 +48,9 @@
 					'-loctbstack',
 					'<!@(echo "-Wl,-rpath $(pwd)/deps/iotivity/lib")'
 				],
-				"cflags": [
-					'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/csdk/stack/include")',
-					'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/csdk/ocrandom/include")',
-					'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/c_common")',
-					'-DROUTING_EP',
-					'-DTCP_ADAPTER'
-				],
+				"cflags": [ '<(internal_octbstack_cflags)' ],
 				"xcode_settings": {
-					"OTHER_CFLAGS": [
-						'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/csdk/stack/include")',
-						'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/csdk/ocrandom/include")',
-						'<!@(echo "-I$(pwd)/deps/iotivity/include/iotivity/resource/c_common")',
-						'-DROUTING_EP',
-						'-DTCP_ADAPTER'
-					]
+					"OTHER_CFLAGS": [ '<(internal_octbstack_cflags)' ]
 				}
 			} ],
 
@@ -84,7 +81,7 @@
 					"actions": [ {
 						"action_name": "build",
 						"inputs": [""],
-						"outputs": [""],
+						"outputs": ["deps/iotivity"],
 						"action": [
 							"sh",
 							"./build-csdk.sh",
@@ -94,6 +91,32 @@
 					} ]
 				} ]
 			]
+		},
+		{
+			"target_name": "generateconstants",
+			"type": "none",
+			"actions": [ {
+				"action_name": "generateconstants",
+				"message": "Generating constants",
+				"inputs": ["deps/iotivity"],
+				"outputs": ["src/constants.cc"],
+				"conditions": [
+					[ "'<(externalOCTBStack)'=='false'", {
+						"action": [
+							"sh",
+							"./generate-constants.sh",
+							'<(internal_octbstack_cflags)'
+						]
+					}, {
+						"action": [
+							"sh",
+							"./generate-constants.sh",
+							'<!@(echo "$OCTBSTACK_CFLAGS")'
+						]
+					} ]
+				]
+			} ],
+			"dependencies": [ "csdk" ]
 		},
 		{
 			"target_name": "iotivity",
@@ -126,7 +149,7 @@
 					"defines": [ "TESTING" ]
 				} ]
 			],
-			"dependencies": [ "csdk" ]
+			"dependencies": [ "csdk", "generateconstants" ]
 		}
 	]
 }
