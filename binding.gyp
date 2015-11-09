@@ -78,15 +78,13 @@
 	"targets": [
 		{
 			"target_name": "csdk",
+			"type": "none",
 			"conditions": [
 				[ "'<(externalOCTBStack)'=='false'", {
 					"actions": [ {
 						"action_name": "build",
-						"inputs": [],
-						"outputs": [
-							"deps/iotivity/lib/liboctbstack.so",
-							"deps/iotivity/include"
-						],
+						"inputs": [""],
+						"outputs": [""],
 						"action": [
 							"sh",
 							"./build-csdk.sh",
