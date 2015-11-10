@@ -30,7 +30,8 @@
 
 	"target_defaults": {
 		"include_dirs": [
-			"<!(node -e \"require('nan')\")"
+			"<!(node -e \"require('nan')\")",
+			"<!@(echo \"$(pwd)/src\")"
 		],
 		"conditions": [
 
@@ -99,7 +100,7 @@
 				"action_name": "generateconstants",
 				"message": "Generating constants",
 				"inputs": ["deps/iotivity"],
-				"outputs": ["src/constants.cc"],
+				"outputs": ["generated/constants.cc"],
 				"conditions": [
 					[ "'<(externalOCTBStack)'=='false'", {
 						"action": [
@@ -125,7 +126,7 @@
 				"action_name": "generateenums",
 				"message": "Generating enums",
 				"inputs": ["deps/iotivity"],
-				"outputs": ["src/enums.cc"],
+				"outputs": ["generated/enums.cc"],
 				"conditions": [
 					[ "'<(externalOCTBStack)'=='false'", {
 						"action": [
@@ -147,8 +148,8 @@
 		{
 			"target_name": "iotivity",
 			"sources": [
-				"src/constants.cc",
-				"src/enums.cc",
+				"generated/constants.cc",
+				"generated/enums.cc",
 				"src/functions.cc",
 				"src/functions/oc-cancel.cc",
 				"src/functions/oc-create-delete-resource.cc",

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Update enums in src/enums.cc. The command line arguments for this script are used to construct
+# Update enums in generated/enums.cc. The command line arguments for this script are used to construct
 # the value of the OCTBSTACK_CFLAGS variable, which, in turn, is used for determining where the
 # include files are located.
 #
-# src/enums.cc contains the comment "// The rest of this file is generated". This script preserves
-# the file up to and including the comment, and discards the rest of the file. It then appends to
-# src/enums.cc the enum definitions from octypes.h
+# generated/enums.cc contains the comment "// The rest of this file is generated". This script
+# preserves the file up to and including the comment, and discards the rest of the file. It then
+# appends to generated/enums.cc the enum definitions from octypes.h
 #
 # The script also generates the function InitEnums() which the file is expected to export.
 
@@ -14,8 +14,10 @@
 
 # enums.cc
 
+mkdir -p generated
+
 # Copy the boilerplate from the existing file
-cat src/enums.cc.in > src/enums.cc.new || ( rm -f src/enums.cc.new && exit 1 )
+cat src/enums.cc.in > generated/enums.cc.new || ( rm -f generated/enums.cc.new && exit 1 )
 
 # Parse header for enums
 cat "${OCTYPES_H}" "${OCRANDOM_H}" "${OCPRESENCE_H}" | \
@@ -49,7 +51,7 @@ cat "${OCTYPES_H}" "${OCRANDOM_H}" "${OCPRESENCE_H}" | \
   END {
     print( "void InitEnums(Handle<Object> exports) {\n" ENUM_LIST "}" );
   }' | \
-  sed 's/[,=]);$/);/' >> src/enums.cc.new || ( rm -f src/enums.cc.new && exit 1 )
+  sed 's/[,=]);$/);/' >> generated/enums.cc.new || ( rm -f generated/enums.cc.new && exit 1 )
 
 # Replace the original file with the generated file
-mv -f src/enums.cc.new src/enums.cc || ( rm -f src/enums.cc.new && exit 1 )
+mv -f generated/enums.cc.new generated/enums.cc || ( rm -f generated/enums.cc.new && exit 1 )
